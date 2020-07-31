@@ -57,7 +57,7 @@ import           Data.Word8
 import Rad.QL.AST
 
 parseDocument :: ByteString -> Either String Document
-parseDocument q = 
+parseDocument q =
   case parse document q of
        Done _ ast -> Right ast
        Fail _ _ e -> Left e

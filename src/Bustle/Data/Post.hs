@@ -178,7 +178,7 @@ data PostReq a where
 deriving instance Eq   (PostReq a)
 deriving instance Show (PostReq a)
 
-instance Show1 PostReq where show1 = show
+instance ShowP PostReq where showp = show
 
 instance Hashable (PostReq a) where
   hashWithSalt s (GetPost  (Id i)       ) = hashWithSalt s (0::Int, i)
@@ -202,11 +202,11 @@ instance DataSourceName PostReq where
   dataSourceName _ = "Post Source (Radredis)"
 
 instance DataSource BustleEnv PostReq where
-  fetch st _flags _benf bfs = AsyncFetch $ \inner -> do
-      asyncReq <- async $ runRedis c 
+  fetch st _flags _benf = AsyncFetch $ \bfs act -> do
+      asyncReq <- async $ runRedis c
                         $ fetchAll kp bfs
-      inner
-      wait asyncReq
+      act
+      Control.Concurrent.Async.wait asyncReq
     where c  = conn st
           kp = keyPrefix st
 

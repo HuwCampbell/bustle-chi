@@ -21,7 +21,7 @@ module Rad.QL.Types
   ) where
 
 import qualified Data.Aeson              as JSON
-import qualified Data.Aeson.Encode       as JSON
+-- import qualified Data.Aeson.Encode       as JSON
 import qualified Data.ByteString         as B
 import qualified Data.ByteString.Char8   as BC8
 import qualified Data.Text               as T
@@ -152,7 +152,7 @@ instance (Monad m) => GraphQLType SCALAR m Bool where
     "TODO: copy and paste description"
 
 instance GraphQLScalar JSON.Value where
-  serialize                   = JSON.encodeToBuilder
+  serialize               = JSON.fromEncoding. JSON.toEncoding
   deserialize (QString v) = JSON.decodeStrict v
   deserialize _               = Nothing
 instance (Monad m) => GraphQLValue m JSON.Value

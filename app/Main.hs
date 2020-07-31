@@ -20,6 +20,7 @@ import Text.Printf
 import System.CPUTime
 
 -- application
+import Bustle.Env as Bustle
 import Bustle.QL as Bustle
 
 data Payload = Payload
@@ -43,7 +44,7 @@ app state = do
     payload <- S.jsonData :: S.ActionM Payload
     let q = query     payload
         v = variables payload
-    e <- liftIO $ Bustle.initBustleEnv state Bustle.Development
+    e <- liftIO $ initEnv state (BustleEnv Bustle.Development Bustle.Unauthed)
     r <- liftIO $ runHaxl e $
       Bustle.run (TE.encodeUtf8 q) (fromMaybe JSON.Null v)
     S.setHeader "Content-Type" "application/json; charset=utf-8"
@@ -54,8 +55,8 @@ main :: IO ()
 main = do
   printf "Initializing state..."
   start <- getCPUTime
-  state <- initState
-  end <- getCPUTime
+  -- state <- initState
+  end   <- getCPUTime
   let d = fromIntegral (end - start :: Integer) / 10^12 :: Double
   printf " ...state init took %0.4f sec\n" d
-  S.scotty 3000 (app state)
+  S.scotty 3000 (app stateEmpty)

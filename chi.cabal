@@ -28,7 +28,7 @@ library
                      , Bustle.QL.Scalars
                      , Bustle.QL.Schema
 
-                     , Bustle.Secret
+                    --  , Bustle.Secret
 
                      , Rad.Graph.Structure
 

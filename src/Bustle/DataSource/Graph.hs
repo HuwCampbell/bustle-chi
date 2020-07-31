@@ -1,7 +1,6 @@
 module Bustle.DataSource.Graph where
 
 import           Control.Concurrent.Async (async, wait)
-import           Control.Lens
 import           Control.Monad (unless)
 import           Control.Monad.IO.Class
 import           Control.Monad.Trans.Class (lift)
@@ -26,8 +25,13 @@ import Bustle.Env
 -- | Graph Source implementation
 
 instance Structure.GraphSource Haxl where
-  getVertex = dataFetch . GetVertex
-  getEdge   = dataFetch . GetEdge
+  getVertex    = dataFetch . GetVertex
+  getEdge      = dataFetch . GetEdge
+  getAdjacency = dataFetch ..... GetAdjacency
+
+(...) = (.) . (.)
+(....) = (...) . (.)
+(.....) = (....) . (.)
 
 -- | Haxl request handler
 
@@ -50,7 +54,7 @@ data GraphReq a where
 deriving instance Eq   (GraphReq a)
 deriving instance Show (GraphReq a)
 
-instance Show1 GraphReq where show1 = show
+instance ShowP GraphReq where showp = show
 
 instance Hashable (GraphReq a) where
   hashWithSalt s (GetVertex i) = hashWithSalt s (0::Int, Structure.getId i)
@@ -76,14 +80,9 @@ instance DataSourceName GraphReq where
   dataSourceName _ = "Graph Source (DynamoDB)"
 
 instance DataSource BustleEnv GraphReq where
-  fetch st _flags _benv bfs = AsyncFetch $ \inner -> do
-      asyncReq <- async $ runResourceT $ AWS.runAWS e $ do
-        -- fetch all vertices
-        undefined
-        -- fetch all edges
-        undefined
-        -- query all adjacencies
-      inner
+  fetch st _flags _benv = AsyncFetch $ \_ act -> do
+      asyncReq <- async (pure ())
+      act
       wait asyncReq
     where e = awsEnv    st
           t = tableName st
@@ -128,7 +127,7 @@ data GraphMutation a where
 deriving instance Eq   (GraphMutation a)
 deriving instance Show (GraphMutation a)
 
-instance Show1 GraphMutation where show1 = show
+instance ShowP GraphMutation where showp = show
 
 instance Hashable (GraphMutation a) where
   hashWithSalt s _ = hashWithSalt s (0::Int)

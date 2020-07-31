@@ -13,7 +13,7 @@ module Bustle.Env
 
 import Data.ByteString (ByteString)
 import GHC.Generics
-import Haxl.Core
+import Haxl.Core hiding (fetchReq)
 
 import Rad.QL
 
@@ -29,4 +29,4 @@ data BustleEnv = BustleEnv
   , session :: Session
   }
 
-type Haxl = GenHaxl BustleEnv
+type Haxl = GenHaxl BustleEnv ()

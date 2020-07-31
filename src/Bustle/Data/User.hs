@@ -109,7 +109,7 @@ data UserReq a where
 deriving instance Eq   (UserReq a)
 deriving instance Show (UserReq a)
 
-instance Show1 UserReq where show1 = show
+instance ShowP UserReq where showp = show
 
 instance Hashable (UserReq a) where
   hashWithSalt s (GetUser (Id i)) = hashWithSalt s (0::Int, i)
@@ -133,7 +133,7 @@ instance DataSourceName UserReq where
   dataSourceName _ = "User Source (DynamoDB)"
 
 instance DataSource BustleEnv UserReq where
-  fetch st _flags _benv bfs = AsyncFetch $ \inner -> do
+  fetch st _flags _benv = AsyncFetch $ \bfs inner -> do
       asyncReq <- async $ runResourceT $ AWS.runAWS e $ do
         let userReqs = map getUserReqs bfs
         unless (null userReqs) $ do

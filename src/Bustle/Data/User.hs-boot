@@ -16,7 +16,6 @@ newtype Id = Id { unwrapId :: Int }
 
 instance Eq Id
 instance Show Id
-instance Typeable Id
 instance GraphQLScalar Id
 instance GraphQLValue Haxl Id
 instance GraphQLType SCALAR Haxl Id
@@ -25,7 +24,6 @@ data User
 
 instance Eq User
 instance Show User
-instance Typeable User
 instance GraphQLValue Haxl User
 instance GraphQLType OBJECT Haxl User
 
